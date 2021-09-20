@@ -1,34 +1,37 @@
 import requests
+from API import start, oncalls, action
+from helper import Elevator
 
+def change_command(command):
+    if len(command)==3:
+        elevator_id, command, call_ids = command
+        return {'elevator_id': elevator_id, 'command': command, 'call_ids':call_ids}
+    elif len(command)==2:
+        elevator_id, command = command
+        return {'elevator_id': elevator_id, 'command': command}
 
-url = 'http://localhost:8000'
-
-
-def start(user, problem, count):
-    uri = url + '/start' + '/' + user + '/' + str(problem) + '/' + str(count)
-    return requests.post(uri).json()
-
-
-def oncalls(token):
-    uri = url + '/oncalls'
-    return requests.get(uri, headers={'X-Auth-Token': token}).json()
-
-
-def action(token, cmds):
-    uri = url + '/action'
-    return requests.post(uri, headers={'X-Auth-Token': token}, json={'commands': cmds}).json()
-
-
-def p0_simulator():
+def simulator(problem, count):
     user = 'tester'
-    problem = 0
-    count = 2
-
     ret = start(user, problem, count)
     token = ret['token']
+    visit = set()
     print('Token for %s is %s' % (user, token))
+    cnt=0
+    while cnt<10:
+        cur_calls= oncalls(token)
+        timestamp, elevators, calls, is_end = cur_calls
+        elevators = [Elevator(elevator) for elevator in elevators]
+        commands = []
+        for elevator in elevators:
+            command = elevator.solution(calls, visit)
+            commands.append(change_command(command))
+        action(token, commands)
+        cnt+=1
+    print(visit)
+    return
 
-    print(oncalls(token))
+
+    action(token, commands)
     action(token, [{'elevator_id': 0, 'command': 'UP'}, {'elevator_id': 1, 'command': 'STOP'}])
 
     oncalls(token)
@@ -111,4 +114,4 @@ def p0_simulator():
 
 
 if __name__ == '__main__':
-    p0_simulator()
+    simulator(0,2)
