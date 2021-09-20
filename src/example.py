@@ -11,7 +11,9 @@ def start(user, problem, count):
 
 def oncalls(token):
     uri = url + '/oncalls'
-    return requests.get(uri, headers={'X-Auth-Token': token}).json()
+    a = requests.get(uri, headers={'X-Auth-Token': token}).json()
+    print(a['calls'])
+    return a
 
 
 def action(token, cmds):

@@ -17,101 +17,26 @@ def simulator(problem, count):
     visit = set()
     print('Token for %s is %s' % (user, token))
     cnt=0
-    while cnt<10:
+    while cnt<10000:
+        visit = set()
         cur_calls= oncalls(token)
         timestamp, elevators, calls, is_end = cur_calls
+        if cnt%100==0:
+            print(calls)
         elevators = [Elevator(elevator) for elevator in elevators]
         commands = []
         for elevator in elevators:
             command = elevator.solution(calls, visit)
             commands.append(change_command(command))
-        action(token, commands)
+        #print(commands)
+        result = action(token, commands)
+        if result['is_end']:
+            print(timestamp)
+            break
         cnt+=1
-    print(visit)
     return
 
 
-    action(token, commands)
-    action(token, [{'elevator_id': 0, 'command': 'UP'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'UP'}, {'elevator_id': 1, 'command': 'OPEN'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'UP'}, {'elevator_id': 1, 'command': 'ENTER', 'call_ids': [2, 3]}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'STOP'}, {'elevator_id': 1, 'command': 'CLOSE'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'OPEN'}, {'elevator_id': 1, 'command': 'UP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'ENTER', 'call_ids': [0, 1]}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'CLOSE'}, {'elevator_id': 1, 'command': 'OPEN'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'DOWN'}, {'elevator_id': 1, 'command': 'EXIT', 'call_ids': [2]}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'STOP'}, {'elevator_id': 1, 'command': 'CLOSE'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'OPEN'}, {'elevator_id': 1, 'command': 'UP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'EXIT', 'call_ids': [1]}, {'elevator_id': 1, 'command': 'UP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'CLOSE'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'DOWN'}, {'elevator_id': 1, 'command': 'OPEN'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'STOP'}, {'elevator_id': 1, 'command': 'EXIT', 'call_ids': [3]}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'OPEN'}, {'elevator_id': 1, 'command': 'CLOSE'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'ENTER', 'call_ids': [4]}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'CLOSE'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'DOWN'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'STOP'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'OPEN'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'EXIT', 'call_ids': [0, 4]}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'ENTER', 'call_ids': [5]}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'CLOSE'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'UP'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'STOP'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'OPEN'}, {'elevator_id': 1, 'command': 'STOP'}])
-
-    oncalls(token)
-    action(token, [{'elevator_id': 0, 'command': 'EXIT', 'call_ids': [5]}, {'elevator_id': 1, 'command': 'STOP'}])
-
 
 if __name__ == '__main__':
-    simulator(0,2)
+    simulator(2,4)

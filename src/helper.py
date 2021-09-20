@@ -8,7 +8,8 @@ class Elevator(object):
         self.command = None
         self.call_ids = []
         self.MAX_COUNT = 8
-
+        self.count = len(self.passengers)
+        #print(self.id, self.floor, self.passengers, self.status, self.count)
     def stop(self):
         if self.status=='OPENED': return False
         self.command='STOP'
@@ -38,13 +39,11 @@ class Elevator(object):
 
     def up(self):
         if self.status=='OPENED' or self.status=='DOWNWARD': return False
-        self.floor+=1
         self.command='UP'
         return True
     
     def down(self):
         if self.status=='OPENED' or self.status=='UPWARD': return False
-        self.floor-=1
         self.command='DOWN'
         return True
 
@@ -65,17 +64,20 @@ class Elevator(object):
             return False
     
     def func_enter(self, calls, visit):
-        for call in calls:
+        if self.count>=self.MAX_COUNT: return False
+        for person_id, call in enumerate(calls):
             id = call.get('id')
-            if id in visit: continue
+            if person_id in visit: continue
 
             timestamp = call.get('timestamp')
             start = call.get('start')
             end = call.get('end')
             if start==self.floor:
                 if self.status=='OPENED':
-                    self.enter(id)
-                    visit.add(id)
+                    if self.MAX_COUNT>self.count:
+                        self.enter(id)
+                        visit.add(person_id)
+                        self.count+=1
                 elif self.status=='STOPPED':
                     self.open()
                     return True
@@ -92,22 +94,37 @@ class Elevator(object):
             self.close()
             return True
         return False
+    
+    def check_stop(self, calls):
+        if not calls and not self.passengers and (self.status=='UPWARD' or self.status=='DOWNWARD'):
+            self.stop()
+            return True
+        return False
 
-    def move(self, first_passenger):
+    def move(self, calls):
         if self.passengers:
-            id, timestamp, start, end = self.passenger[0]
+            end = self.passengers[0]['end']
+            end = int(end)
             if end>self.floor:
                 self.up()
                 return True
-            else:
+            elif end<self.floor:
                 self.down()
                 return True
         else:
-            id, timestamp, start, end = first_passenger[0]
-            if start>self.floor:
+            dest = 0
+            diff = 1000000
+            for call in calls:
+                start = int(call['start'])
+                if diff>abs(self.floor-start):
+                    diff = abs(self.floor-start)
+                    dest = start
+                    break
+            #id, timestamp, start, end = first_passenger[0]
+            if dest>self.floor:
                 self.up()
                 return True
-            else:
+            elif dest<self.floor:
                 self.down()
                 return True
         return False
@@ -130,7 +147,13 @@ class Elevator(object):
         if check: return self.return_result()
         check = self.check_close()
         if check: return self.return_result()
+        check = self.check_stop(calls)
+        if check: return self.return_result()
+        check = self.move(calls)
+        if check: return self.return_result()
+        '''
         if calls:
             check = self.move(calls[0])
             if check: return self.return_result()
+        '''
         return self.return_result()
