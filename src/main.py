@@ -39,4 +39,4 @@ def simulator(problem, count):
 
 
 if __name__ == '__main__':
-    simulator(2,4)
+    simulator(0,4)
